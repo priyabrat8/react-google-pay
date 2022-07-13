@@ -1,23 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import GooglePayButton from '@google-pay/button-react'
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <GooglePayButton
+  environment="TEST"
+  paymentRequest={{
+    apiVersion: 2,
+    apiVersionMinor: 0,
+    allowedPaymentMethods: [
+      {
+        type: 'CARD',
+        parameters: {
+          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+          allowedCardNetworks: ['MASTERCARD', 'VISA'],
+        },
+        tokenizationSpecification: {
+          type: 'PAYMENT_GATEWAY',
+          parameters: {
+            gateway: 'example',
+            gatewayMerchantId: 'exampleGatewayMerchantId',
+          },
+        },
+      },
+    ],
+    merchantInfo: {
+      merchantId: '12345678901234567890',
+      merchantName: 'Demo Merchant',
+    },
+    transactionInfo: {
+      totalPriceStatus: 'FINAL',
+      totalPriceLabel: 'Total',
+      totalPrice: '1.00',
+      currencyCode: 'USD',
+      countryCode: 'US',
+    },
+    shippingAddressRequired:true,
+    callbackIntents:["PAYMENT_AUTHORIZATION"]
+  }}
+  onLoadPaymentData={paymentRequest => {
+    console.log('load payment data', paymentRequest);
+  }}
+  onPaymentAuthorized={paymentData => {
+    console.log(paymentData);
+    return {transactionState: 'SUCCESS'}
+  }}
+/>
     </div>
   );
 }
